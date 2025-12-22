@@ -1,0 +1,43 @@
+app:
+  name: "fiber-ee"
+  env: "dev"
+  port: ":8080"
+  debug: true
+
+log:
+  level: "debug"
+  format: "json"
+  output: "logs"
+
+database:
+  driver: "sqlite" # sqlite, mysql, postgres
+  source: "test.db"
+  tablePrefix: "la_"
+  gen_out_path: "./internal/model/query"
+  gen_model_pkg_path: "./internal/model/entity"
+  gen_yaml_path: "./cmd/gen_orm/gen.yaml"
+  # 通用数据库配置 (MySQL / Postgres)
+  host: "localhost"
+  port: "3306" # MySQL: 3306, Postgres: 5432
+  user: "root"
+  password: "password"
+  dbname: "fiber_ee"
+  sslmode: "disable" # Postgres 专用
+  max_idle_conns: 10
+  max_open_conns: 100
+  conn_max_lifetime: 3600 # seconds
+
+redis:
+  enabled: true
+  host: "localhost"
+  port: "6379"
+  password: ""
+  db: 0
+
+jwt:
+  secret: "your-secret-key"
+  expire: 7200 # Access Token 有效期（秒）
+  refresh_expire: 604800 # Refresh Token 有效期（7天）
+
+casbin:
+  model_path: "./config/rbac_model.conf"

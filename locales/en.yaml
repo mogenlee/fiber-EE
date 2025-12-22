@@ -1,0 +1,28 @@
+# Parameter errors
+params_error: "Parameter validation failed"
+params_type_error: "Parameter type error"
+field_type_error: "Field {{.Field}} type error, expected {{.Type}}"
+json_syntax_error: "JSON syntax error"
+
+# Common business errors
+operation_success: "Operation successful"
+operation_failed: "Operation failed"
+
+# Data operation errors
+query_failed: "Query data failed"
+create_failed: "Create data failed"
+update_failed: "Update data failed"
+delete_failed: "Delete data failed"
+data_not_found: "Data not found"
+data_exists: "Data already exists"
+
+# Authentication errors
+unauthorized: "Unauthorized or session expired"
+token_invalid: "Invalid token"
+forbidden: "Access denied"
+login_failed: "Invalid username or password"
+
+# System errors
+internal_error: "Internal server error"
+route_not_found: "Route not found"
+too_many_requests: "Too many requests"

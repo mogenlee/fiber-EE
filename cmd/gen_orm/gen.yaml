@@ -1,0 +1,11 @@
+config:
+  tag_json_camel: lower                 # lower 首字母小写驼峰，upper 首字母大写驼峰
+
+relation:
+  - table: users
+
+
+  #  many_many 多对多
+  #  has_many 一对多
+  #  belongs_to 一对一
+  #  has_one 一对一
