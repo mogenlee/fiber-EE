@@ -48,6 +48,9 @@ func main() {
 	db := connectDB(cfg)
 	g.UseDB(db)
 
+	// 添加自定义类型的 import
+	g.WithImportPkgPath("fiber-ee/internal/pkg/types")
+
 	// 自定义字段的数据类型
 	dataMap := map[string]func(detailType gorm.ColumnType) (dataType string){
 		"timestamp": func(detailType gorm.ColumnType) (dataType string) { return "LocalTime" },
@@ -55,21 +58,24 @@ func main() {
 	g.WithDataTypeMap(dataMap)
 
 	// GORM 标签配置
-	createTimeGormTag := gen.FieldGORMTag("create_time", func(tag field.GormTag) field.GormTag {
+	createTimeGormTag := gen.FieldGORMTag("created_at", func(tag field.GormTag) field.GormTag {
 		tag.Append("autoCreateTime")
 		return tag
 	})
-	updateTimeGormTag := gen.FieldGORMTag("update_time", func(tag field.GormTag) field.GormTag {
+	updateTimeGormTag := gen.FieldGORMTag("updated_at", func(tag field.GormTag) field.GormTag {
 		tag.Append("autoUpdateTime")
 		return tag
 	})
-	deleteTimeGormTag := gen.FieldGORMTag("delete_time", func(tag field.GormTag) field.GormTag {
-		tag.Append("DEFAULT", "0")
-		return tag
-	})
-	softDeleteField := gen.FieldType("delete_time", "soft_delete.DeletedAt")
 
-	modelOpts := []gen.ModelOpt{softDeleteField, createTimeGormTag, updateTimeGormTag, deleteTimeGormTag}
+	// 时间字段使用自定义 Timestamp 类型
+	createdAtType := gen.FieldType("created_at", "types.Timestamp")
+	updatedAtType := gen.FieldType("updated_at", "types.Timestamp")
+	deletedAtType := gen.FieldType("deleted_at", "soft_delete.DeletedAt")
+
+	modelOpts := []gen.ModelOpt{
+		createdAtType, updatedAtType, deletedAtType,
+		createTimeGormTag, updateTimeGormTag,
+	}
 
 	// 生成代码
 	yamlgen.NewYamlGenerator(genYamlPath).UseGormGenerator(g).Generate(modelOpts...)

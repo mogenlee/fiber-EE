@@ -96,6 +96,7 @@ require (
 	gorm.io/datatypes v1.2.7 // indirect
 	gorm.io/driver/sqlserver v1.6.0 // indirect
 	gorm.io/hints v1.1.2 // indirect
+	gorm.io/plugin/soft_delete v1.2.1 // indirect
 	modernc.org/libc v1.22.2 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.5.0 // indirect

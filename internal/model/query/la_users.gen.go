@@ -29,9 +29,9 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	tableName := _user.userDo.TableName()
 	_user.ALL = field.NewAsterisk(tableName)
 	_user.ID = field.NewInt32(tableName, "id")
-	_user.CreatedAt = field.NewInt32(tableName, "created_at")
-	_user.UpdatedAt = field.NewInt32(tableName, "updated_at")
-	_user.DeletedAt = field.NewInt32(tableName, "deleted_at")
+	_user.CreatedAt = field.NewField(tableName, "created_at")
+	_user.UpdatedAt = field.NewField(tableName, "updated_at")
+	_user.DeletedAt = field.NewField(tableName, "deleted_at")
 	_user.Username = field.NewString(tableName, "username")
 	_user.Password = field.NewString(tableName, "password")
 	_user.Email = field.NewString(tableName, "email")
@@ -46,9 +46,9 @@ type user struct {
 
 	ALL       field.Asterisk
 	ID        field.Int32
-	CreatedAt field.Int32
-	UpdatedAt field.Int32
-	DeletedAt field.Int32
+	CreatedAt field.Field
+	UpdatedAt field.Field
+	DeletedAt field.Field
 	Username  field.String
 	Password  field.String
 	Email     field.String
@@ -69,9 +69,9 @@ func (u user) As(alias string) *user {
 func (u *user) updateTableName(table string) *user {
 	u.ALL = field.NewAsterisk(table)
 	u.ID = field.NewInt32(table, "id")
-	u.CreatedAt = field.NewInt32(table, "created_at")
-	u.UpdatedAt = field.NewInt32(table, "updated_at")
-	u.DeletedAt = field.NewInt32(table, "deleted_at")
+	u.CreatedAt = field.NewField(table, "created_at")
+	u.UpdatedAt = field.NewField(table, "updated_at")
+	u.DeletedAt = field.NewField(table, "deleted_at")
 	u.Username = field.NewString(table, "username")
 	u.Password = field.NewString(table, "password")
 	u.Email = field.NewString(table, "email")
