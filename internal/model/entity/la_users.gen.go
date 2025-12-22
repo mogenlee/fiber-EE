@@ -4,17 +4,23 @@
 
 package entity
 
+import (
+	"fiber-ee/internal/pkg/types"
+
+	"gorm.io/plugin/soft_delete"
+)
+
 const TableNameUser = "la_users"
 
 // User mapped from table <la_users>
 type User struct {
-	ID        int32  `gorm:"column:id;type:integer;primaryKey" json:"id"`
-	CreatedAt int32  `gorm:"column:created_at;type:integer;not null" json:"createdAt"`
-	UpdatedAt int32  `gorm:"column:updated_at;type:integer;not null" json:"updatedAt"`
-	DeletedAt int32  `gorm:"column:deleted_at;type:integer;not null" json:"deletedAt"`
-	Username  string `gorm:"column:username;type:text;not null" json:"username"`
-	Password  string `gorm:"column:password;type:text;not null" json:"password"`
-	Email     string `gorm:"column:email;type:text;not null" json:"email"`
+	ID        int32                 `gorm:"column:id;type:integer;primaryKey" json:"id"`
+	CreatedAt types.Timestamp       `gorm:"column:created_at;type:integer;not null;autoCreateTime" json:"createdAt"`
+	UpdatedAt types.Timestamp       `gorm:"column:updated_at;type:integer;not null;autoUpdateTime" json:"updatedAt"`
+	DeletedAt soft_delete.DeletedAt `gorm:"column:deleted_at;type:integer;not null" json:"deletedAt"`
+	Username  string                `gorm:"column:username;type:text;not null" json:"username"`
+	Password  string                `gorm:"column:password;type:text;not null" json:"password"`
+	Email     string                `gorm:"column:email;type:text;not null" json:"email"`
 }
 
 // TableName User's table name
