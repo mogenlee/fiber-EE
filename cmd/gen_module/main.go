@@ -29,7 +29,7 @@ func toTitle(s string) string {
 func main() {
 	// 命令行参数
 	moduleName := flag.String("name", "", "模块名称 (必填)")
-	routerOut := flag.String("router", "internal/router/admin", "router 输出目录")
+	handlerOut := flag.String("handler", "internal/handler/admin", "handler 输出目录")
 	serviceOut := flag.String("service", "internal/service/admin", "service 输出目录")
 	tplDir := flag.String("tpl", "cmd/gen_module", "模板目录")
 	flag.Parse()
@@ -40,7 +40,7 @@ func main() {
 		flag.PrintDefaults()
 		fmt.Println("\n示例:")
 		fmt.Println("  go run cmd/gen_module/main.go -name=article")
-		fmt.Println("  go run cmd/gen_module/main.go -name=article -router=internal/router/app")
+		fmt.Println("  go run cmd/gen_module/main.go -name=article -handler=internal/handler/app")
 		os.Exit(1)
 	}
 
@@ -51,12 +51,12 @@ func main() {
 		RoutePath:   name,
 	}
 
-	// 生成 router
-	routerDir := filepath.Join(*routerOut, name)
-	if err := os.MkdirAll(routerDir, 0755); err != nil {
+	// 生成 handler
+	handlerDir := filepath.Join(*handlerOut, name)
+	if err := os.MkdirAll(handlerDir, 0755); err != nil {
 		panic(err)
 	}
-	generateFile(filepath.Join(*tplDir, "router.go.tpl"), filepath.Join(routerDir, "router.go"), data)
+	generateFile(filepath.Join(*tplDir, "router.go.tpl"), filepath.Join(handlerDir, "handler.go"), data)
 
 	// 生成 service
 	serviceDir := filepath.Join(*serviceOut, name)
@@ -68,7 +68,7 @@ func main() {
 	fmt.Printf("\n模块 [%s] 生成完成！\n", name)
 	fmt.Println("\n请手动添加到注册列表：")
 	fmt.Printf("  internal/bootstrap/buildRouter.go:\n")
-	fmt.Printf("    import %s \"fiber-ee/internal/router/admin/%s\"\n", name, name)
+	fmt.Printf("    import %s \"fiber-ee/internal/handler/admin/%s\"\n", name, name)
 	fmt.Printf("    var adminRouters = []any{ ..., %s.NewRouter }\n\n", name)
 	fmt.Printf("  internal/bootstrap/buildService.go:\n")
 	fmt.Printf("    import %s \"fiber-ee/internal/service/admin/%s\"\n", name, name)

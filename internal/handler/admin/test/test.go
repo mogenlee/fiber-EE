@@ -1,9 +1,9 @@
 package test
 
 import (
+	"fiber-ee/internal/dto/req"
 	"fiber-ee/internal/pkg/request"
 	"fiber-ee/internal/pkg/response"
-	"fiber-ee/internal/schema/req"
 	"fiber-ee/internal/service/admin/test"
 
 	"github.com/gofiber/fiber/v3"
@@ -36,7 +36,7 @@ func (h TestRouter) Register(root fiber.Router) {
 }
 
 func (h TestRouter) login(ctx fiber.Ctx) error {
-	var loginReq req.TestLoginResp
+	var loginReq req.TestLoginReq
 	if err := h.validate.BindAndValidate(ctx, &loginReq); err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (h TestRouter) details(ctx fiber.Ctx) error {
 }
 
 func (h TestRouter) edit(ctx fiber.Ctx) error {
-	var editReq req.TestEditResp
+	var editReq req.TestEditReq
 	if err := h.validate.BindAndValidate(ctx, &editReq); err != nil {
 		return err
 	}

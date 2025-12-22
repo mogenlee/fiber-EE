@@ -1094,3 +1094,28 @@
 {"level":"info","ts":"2025-12-22T19:17:57.957+0800","caller":"bootstrap/database.go:80","msg":"数据库初始化成功","driver":"sqlite","prefix":"la_"}
 {"level":"info","ts":"2025-12-22T19:17:58.019+0800","caller":"bootstrap/casbin.go:34","msg":"Casbin 初始化成功","model":"./config/rbac_model.conf"}
 {"level":"info","ts":"2025-12-22T19:17:58.019+0800","caller":"server/server.go:64","msg":"正在启动服务器","port":":8080"}
+{"level":"info","ts":"2025-12-22T20:15:49.936+0800","caller":"bootstrap/logger.go:73","msg":"日志模块初始化成功","level":"debug","format":"json"}
+{"level":"info","ts":"2025-12-22T20:15:49.953+0800","caller":"bootstrap/redis.go:34","msg":"Redis 连接成功"}
+{"level":"info","ts":"2025-12-22T20:15:49.956+0800","caller":"bootstrap/database.go:80","msg":"数据库初始化成功","driver":"sqlite","prefix":"la_"}
+{"level":"info","ts":"2025-12-22T20:15:50.030+0800","caller":"bootstrap/casbin.go:34","msg":"Casbin 初始化成功","model":"./config/rbac_model.conf"}
+{"level":"info","ts":"2025-12-22T20:15:50.030+0800","caller":"bootstrap/server.go:64","msg":"正在启动服务器","port":":8080"}
+{"level":"info","ts":"2025-12-22T20:18:41.212+0800","caller":"server/main.go:80","msg":"收到关闭信号","signal":"interrupt"}
+{"level":"info","ts":"2025-12-22T20:18:41.315+0800","caller":"bootstrap/server.go:74","msg":"HTTP 服务已关闭"}
+{"level":"info","ts":"2025-12-22T20:18:41.315+0800","caller":"bootstrap/server.go:82","msg":"Redis 连接已关闭"}
+{"level":"info","ts":"2025-12-22T20:18:41.316+0800","caller":"bootstrap/server.go:93","msg":"数据库连接已关闭"}
+{"level":"info","ts":"2025-12-22T20:18:41.316+0800","caller":"server/main.go:97","msg":"服务器已优雅关闭"}
+{"level":"info","ts":"2025-12-22T20:18:45.538+0800","caller":"bootstrap/logger.go:73","msg":"日志模块初始化成功","level":"debug","format":"json"}
+{"level":"info","ts":"2025-12-22T20:18:45.542+0800","caller":"bootstrap/redis.go:34","msg":"Redis 连接成功"}
+{"level":"info","ts":"2025-12-22T20:18:45.545+0800","caller":"bootstrap/database.go:80","msg":"数据库初始化成功","driver":"sqlite","prefix":"la_"}
+{"level":"info","ts":"2025-12-22T20:18:45.612+0800","caller":"bootstrap/casbin.go:34","msg":"Casbin 初始化成功","model":"./config/rbac_model.conf"}
+{"level":"info","ts":"2025-12-22T20:18:45.612+0800","caller":"bootstrap/server.go:64","msg":"正在启动服务器","port":":8080"}
+{"level":"info","ts":"2025-12-22T20:20:34.479+0800","caller":"server/main.go:80","msg":"收到关闭信号","signal":"interrupt"}
+{"level":"info","ts":"2025-12-22T20:20:34.479+0800","caller":"bootstrap/server.go:74","msg":"HTTP 服务已关闭"}
+{"level":"info","ts":"2025-12-22T20:20:34.480+0800","caller":"bootstrap/server.go:82","msg":"Redis 连接已关闭"}
+{"level":"info","ts":"2025-12-22T20:20:34.480+0800","caller":"bootstrap/server.go:93","msg":"数据库连接已关闭"}
+{"level":"info","ts":"2025-12-22T20:20:34.480+0800","caller":"server/main.go:97","msg":"服务器已优雅关闭"}
+{"level":"info","ts":"2025-12-22T20:20:38.382+0800","caller":"bootstrap/logger.go:73","msg":"日志模块初始化成功","level":"debug","format":"json"}
+{"level":"info","ts":"2025-12-22T20:20:38.387+0800","caller":"bootstrap/redis.go:34","msg":"Redis 连接成功"}
+{"level":"info","ts":"2025-12-22T20:20:38.390+0800","caller":"bootstrap/database.go:80","msg":"数据库初始化成功","driver":"sqlite","prefix":"la_"}
+{"level":"info","ts":"2025-12-22T20:20:38.401+0800","caller":"bootstrap/casbin.go:34","msg":"Casbin 初始化成功","model":"./config/rbac_model.conf"}
+{"level":"info","ts":"2025-12-22T20:20:38.455+0800","caller":"bootstrap/server.go:82","msg":"正在启动服务器","port":":8080"}

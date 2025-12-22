@@ -1,13 +1,13 @@
 package test
 
 import (
+	"fiber-ee/internal/dto/req"
 	"fiber-ee/internal/middleware"
 	"fiber-ee/internal/model/entity"
 	"fiber-ee/internal/model/query"
 	"fiber-ee/internal/pkg/request"
 	"fiber-ee/internal/pkg/response"
 	"fiber-ee/internal/pkg/utils"
-	"fiber-ee/internal/schema/req"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -16,9 +16,9 @@ import (
 type TestService interface {
 	List(ctx fiber.Ctx, pageReq *request.PageReq, listReq req.TestListReq) (any, error)
 	Detail(ctx fiber.Ctx, id int32) (any, error)
-	Edit(ctx fiber.Ctx, editReq req.TestEditResp) error
+	Edit(ctx fiber.Ctx, editReq req.TestEditReq) error
 	Add(ctx fiber.Ctx, addReq req.TestAddReq) error
-	Login(ctx fiber.Ctx, loginReq req.TestLoginResp) (any, error)
+	Login(ctx fiber.Ctx, loginReq req.TestLoginReq) (any, error)
 }
 
 type testService struct {
@@ -26,7 +26,7 @@ type testService struct {
 	jwtCfg *middleware.JWTConfig
 }
 
-func (t testService) Login(ctx fiber.Ctx, loginReq req.TestLoginResp) (any, error) {
+func (t testService) Login(ctx fiber.Ctx, loginReq req.TestLoginReq) (any, error) {
 	m := t.db.User
 	q := m.WithContext(ctx)
 
@@ -60,7 +60,7 @@ func (t testService) Add(ctx fiber.Ctx, addReq req.TestAddReq) error {
 	return q.Create(&obj)
 }
 
-func (t testService) Edit(ctx fiber.Ctx, editReq req.TestEditResp) error {
+func (t testService) Edit(ctx fiber.Ctx, editReq req.TestEditReq) error {
 	m := t.db.User
 	q := m.WithContext(ctx)
 

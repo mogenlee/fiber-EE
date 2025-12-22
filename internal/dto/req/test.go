@@ -5,7 +5,7 @@ type TestListReq struct {
 	Id       int32  `query:"id"`
 }
 
-type TestEditResp struct {
+type TestEditReq struct {
 	Id       int32  `json:"id" validate:"required"`
 	Username string `json:"username" validate:"required"`
 }
@@ -14,7 +14,7 @@ type TestAddReq struct {
 	Username string `json:"username" validate:"required"`
 }
 
-type TestLoginResp struct {
+type TestLoginReq struct {
 	Username string `json:"username" validate:"required,min=3,max=20"`
 	Password string `json:"password" validate:"required,min=6,max=18"`
 }

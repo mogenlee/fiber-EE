@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+*.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Database files
+*.db
+data/*.db
+
+# Logs
+logs/
+
+# Binary
+/bin/
+*.exe
+
+# Environment
+.env
+.env.local
+
+# Temp files
+*.tmp
+*.temp

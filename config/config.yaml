@@ -11,7 +11,7 @@ log:
 
 database:
   driver: "sqlite" # sqlite, mysql, postgres
-  source: "test.db"
+  source: "data/test.db"
   tablePrefix: "la_"
   gen_out_path: "./internal/model/query"
   gen_model_pkg_path: "./internal/model/entity"

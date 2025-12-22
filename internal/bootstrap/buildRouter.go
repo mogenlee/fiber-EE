@@ -1,22 +1,27 @@
 package bootstrap
 
 import (
-	"fiber-ee/internal/router"
-	"fiber-ee/internal/router/admin/auth"
-	"fiber-ee/internal/router/admin/test"
+	"fiber-ee/internal/handler/admin/auth"
+	"fiber-ee/internal/handler/admin/test"
 
+	"github.com/gofiber/fiber/v3"
 	"go.uber.org/dig"
 )
 
+// AppRouter 路由接口
+type AppRouter interface {
+	Register(root fiber.Router)
+}
+
 func buildAdminRoutes(c *dig.Container) {
 	for _, routers := range adminRouters {
-		_ = c.Provide(routers, dig.As(new(router.AppRouter)), dig.Group("admin_routers"))
+		_ = c.Provide(routers, dig.As(new(AppRouter)), dig.Group("admin_routers"))
 	}
 }
 
 func buildAppRoutes(c *dig.Container) {
 	for _, routers := range appRouters {
-		_ = c.Provide(routers, dig.As(new(router.AppRouter)), dig.Group("app_routers"))
+		_ = c.Provide(routers, dig.As(new(AppRouter)), dig.Group("app_routers"))
 	}
 }
 
