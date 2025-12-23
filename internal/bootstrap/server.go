@@ -34,6 +34,7 @@ type NewServerParams struct {
 	Validator    *validator.CustomValidator
 	Redis        *redis.Client
 	DB           *gorm.DB
+	Storage      fiber.Storage
 	Enforcer     *casbin.Enforcer
 	AdminRouters []AppRouter `group:"admin_routers"`
 	AppRouters   []AppRouter `group:"app_routers"`
@@ -50,7 +51,7 @@ func NewServer(p NewServerParams) *Server {
 	app.Get("/metrics", monitor.New(monitor.Config{Title: p.Config.App.Name}))
 
 	// 注册全局中间件
-	middleware.Use(app, p.Log)
+	middleware.Use(app, p.Config, p.Log, p.Storage)
 
 	// 注册 Admin 路由组（JWT + Casbin）
 	admin := app.Group("/admin/v1",

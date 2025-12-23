@@ -152,6 +152,15 @@ func SuccessPage(c fiber.Ctx, list any, total int64, page, pageSize int) error {
 	})
 }
 
+// TooManyRequests 请求过于频繁
+func TooManyRequests(c fiber.Ctx) error {
+	return c.Status(fiber.StatusTooManyRequests).JSON(Response{
+		Code: ErrTooMany.code,
+		Msg:  ErrTooMany.msg,
+		Data: nil,
+	})
+}
+
 // httpStatus 业务码转 HTTP 状态码
 func httpStatus(code int) int {
 	switch {

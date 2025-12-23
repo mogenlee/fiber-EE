@@ -34,9 +34,9 @@ func (t testService) Login(ctx fiber.Ctx, loginReq req.TestLoginReq) (any, error
 	if err != nil {
 		return nil, response.ErrLogin
 	}
-
+	password, _ := utils.HashPassword(loginReq.Password)
 	// 验证密码
-	if !utils.CheckPassword(loginReq.Password, user.Password) {
+	if !utils.CheckPassword(loginReq.Password, password) {
 		return nil, response.ErrLogin
 	}
 

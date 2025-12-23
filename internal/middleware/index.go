@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fiber-ee/config"
 	"fiber-ee/internal/pkg/i18n"
 
 	"github.com/gofiber/fiber/v3"
@@ -13,31 +14,34 @@ import (
 )
 
 // Use 注册全局中间件（不含认证）
-// 包含：panic 恢复、请求ID、请求日志、i18n、安全头、压缩、favicon、跨域
-func Use(app *fiber.App, logger *zap.Logger) {
-	// panic 恢复，防止单个请求崩溃影响整个服务
+func Use(app *fiber.App, cfg *config.Config, logger *zap.Logger, storage fiber.Storage) {
+	// panic 恢复
 	app.Use(recoverErr(logger))
 
-	// 为每个请求生成唯一 ID，便于日志追踪
+	// 请求 ID
 	app.Use(requestid.New())
 
-	// 请求日志中间件
+	// 请求日志
 	app.Use(requestLogger(logger))
 
-	// i18n 国际化中间件
+	// i18n 国际化
 	app.Use(i18n.New())
 
-	// 安全响应头（XSS、点击劫持等防护）
+	// 安全响应头
 	app.Use(helmet.New())
 
-	// 响应压缩（gzip/brotli）
+	// 响应压缩
 	app.Use(compress.New(compress.Config{
 		Level: compress.LevelDefault,
 	}))
 
-	// favicon 处理，避免 404
+	// favicon
 	app.Use(favicon.New())
 
-	// 跨域资源共享
+	// 跨域
 	app.Use(cors.New())
+
+	// 限流
+	app.Use(NewLimiter(cfg.Limiter, storage))
+
 }

@@ -7,6 +7,7 @@ type Config struct {
 	Redis    Redis    `mapstructure:"redis"`
 	JWT      JWT      `mapstructure:"jwt"`
 	Casbin   Casbin   `mapstructure:"casbin"`
+	Limiter  Limiter  `mapstructure:"limiter"`
 }
 
 type App struct {
@@ -57,4 +58,11 @@ type JWT struct {
 
 type Casbin struct {
 	ModelPath string `mapstructure:"model_path"`
+}
+
+type Limiter struct {
+	Enabled    bool `mapstructure:"enabled"`
+	Max        int  `mapstructure:"max"`
+	Expiration int  `mapstructure:"expiration"` // 秒
+	SkipLocal  bool `mapstructure:"skip_local"`
 }
