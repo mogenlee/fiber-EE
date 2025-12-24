@@ -31,13 +31,6 @@ type JWTConfig struct {
 	RefreshExpire time.Duration
 }
 
-// JWTWhitelist JWT 认证白名单（不需要认证的路径）
-var JWTWhitelist = []string{
-	"/admin/v1/test/login",
-	"/admin/v1/auth/refresh",
-	"/api/v1/users/register",
-}
-
 // NewJWTConfig 从配置创建 JWT 配置
 func NewJWTConfig(cfg *config.Config) *JWTConfig {
 	return &JWTConfig{
@@ -128,8 +121,8 @@ func RefreshToken(cfg *JWTConfig, refreshTokenStr string) (*TokenPair, error) {
 // JWTAuth JWT 认证中间件
 func JWTAuth(cfg *config.Config) fiber.Handler {
 	// 构建白名单 map（闭包内只初始化一次）
-	whitelistMap := make(map[string]struct{}, len(JWTWhitelist))
-	for _, path := range JWTWhitelist {
+	whitelistMap := make(map[string]struct{}, len(notAuthList))
+	for _, path := range notAuthList {
 		whitelistMap[path] = struct{}{}
 	}
 

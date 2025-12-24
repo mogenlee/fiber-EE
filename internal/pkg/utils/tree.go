@@ -1,85 +1,137 @@
 package utils
 
-import "github.com/samber/lo"
+import (
+	"sort"
 
-// TreeNode 树节点接口
-type TreeNode interface {
-	GetID() int64
-	GetParentID() int64
+	"github.com/bytedance/sonic"
+	"github.com/spf13/cast"
+)
+
+const (
+	treeDefaultId       = "id"
+	treeDefaultPid      = "pid"
+	treeDefaultChildren = "children"
+	treeBeginCut        = "tr_"
+	treeEndCut          = " "
+)
+
+type GenOption struct {
+	IdField       string
+	PidField      string
+	ChildrenField string
 }
 
-// TreeResult 带 Children 的树节点
-type TreeResult[T any] struct {
-	Node     T                `json:"node"`
-	Children []*TreeResult[T] `json:"children,omitempty"`
+func GenTree(obj any) ([]map[string]any, error) {
+	menus, err := toMaps(obj)
+	if err != nil {
+		return nil, err
+	}
+	return GenTreeWithField(menus, GenOption{
+		IdField:       treeDefaultId,
+		PidField:      treeDefaultPid,
+		ChildrenField: treeDefaultChildren,
+	}), nil
 }
 
-// BuildTree 构建树结构
-// items: 原始列表
-// rootID: 根节点的 ParentID（通常为 0）
-func BuildTree[T TreeNode](items []T, rootID int64) []*TreeResult[T] {
-	// 按 ParentID 分组
-	grouped := lo.GroupBy(items, func(item T) int64 {
-		return item.GetParentID()
-	})
+func GenTreeWithField(obj any, op GenOption) []map[string]any {
+	menus, err := toMaps(obj)
+	if err != nil || len(menus) == 0 {
+		return nil
+	}
 
-	var build func(parentID int64) []*TreeResult[T]
-	build = func(parentID int64) []*TreeResult[T] {
-		children := grouped[parentID]
-		if len(children) == 0 {
-			return nil
+	// 初始化根节点PID为最小值（通常为0）
+	minPid := GetMinPid(menus, op.PidField)
+
+	// 构建ID索引表，便于快速查找节点
+	formatMenu := make(map[int]map[string]any)
+	var rootMenus []map[string]any // 根节点列表
+
+	// 第一轮遍历：建立索引并收集根节点
+	for _, m := range menus {
+		id := cast.ToInt(m[op.IdField])
+		formatMenu[id] = m // 按ID存储节点
+
+		// 当PID等于最小PID时视为根节点
+		if cast.ToInt(m[op.PidField]) == minPid {
+			rootMenus = append(rootMenus, m)
+		}
+	}
+
+	// 第二轮遍历：为每个节点找到父节点并添加到子节点列表
+	for _, m := range menus { // 注意：遍历原始切片保证顺序（与输入顺序一致）
+		pid := cast.ToInt(m[op.PidField])
+		parent, exists := formatMenu[pid]
+		if !exists {
+			continue // 父节点不存在时跳过（可能为无效数据）
 		}
 
-		return lo.Map(children, func(item T, _ int) *TreeResult[T] {
-			return &TreeResult[T]{
-				Node:     item,
-				Children: build(item.GetID()),
-			}
+		// 安全获取或初始化子节点切片（保证按遍历顺序追加到尾部）
+		children, ok := parent[op.ChildrenField].([]map[string]any)
+		if !ok {
+			children = make([]map[string]any, 0)
+		}
+		children = append(children, m) // 按原始顺序追加到尾部
+		parent[op.ChildrenField] = children
+	}
+
+	return rootMenus
+}
+
+// sortChildren 对子节点进行排序（保持原有顺序可注释此函数）
+func sortChildren(menus []map[string]any, childrenField, idField string) {
+	for _, m := range menus {
+		children, ok := m[childrenField].([]map[string]any)
+		if !ok {
+			continue
+		}
+
+		// 按ID升序排序（如需保持原始顺序，删除此排序逻辑）
+		sort.Slice(children, func(i, j int) bool {
+			return cast.ToInt(children[i][idField]) < cast.ToInt(children[j][idField])
 		})
-	}
 
-	return build(rootID)
+		// 递归排序子节点的子节点
+		sortChildren(children, childrenField, idField)
+	}
 }
 
-// FlatTree 扁平化树结构（树转列表）
-func FlatTree[T any](trees []*TreeResult[T]) []T {
-	var result []T
-	var flat func(nodes []*TreeResult[T])
-	flat = func(nodes []*TreeResult[T]) {
-		for _, node := range nodes {
-			result = append(result, node.Node)
-			if len(node.Children) > 0 {
-				flat(node.Children)
-			}
+func GetMinPid(menus []map[string]any, pidField string) int {
+	index := -1
+	for _, m := range menus {
+		pid := cast.ToInt(m[pidField])
+		if index == -1 {
+			index = pid
+			continue
+		}
+		if pid < index {
+			index = pid
 		}
 	}
-	flat(trees)
-	return result
+	return max(index, 0) // 确保返回非负数（避免-1作为PID）
 }
 
-// FindTreeNode 在树中查找节点
-func FindTreeNode[T TreeNode](trees []*TreeResult[T], id int64) *TreeResult[T] {
-	for _, node := range trees {
-		if node.Node.GetID() == id {
-			return node
-		}
-		if found := FindTreeNode(node.Children, id); found != nil {
-			return found
-		}
+// 辅助函数：取最大值
+func max(a, b int) int {
+	if a > b {
+		return a
 	}
-	return nil
+	return b
 }
 
-// GetTreeIDs 获取树中所有节点 ID
-func GetTreeIDs[T TreeNode](trees []*TreeResult[T]) []int64 {
-	var ids []int64
-	var collect func(nodes []*TreeResult[T])
-	collect = func(nodes []*TreeResult[T]) {
-		for _, node := range nodes {
-			ids = append(ids, node.Node.GetID())
-			collect(node.Children)
-		}
+// toMaps 使用 sonic.Unmarshal 将输入的对象转换为 map 切片
+func toMaps(obj any) ([]map[string]any, error) {
+	// 使用 sonic.Marshal 将输入对象序列化为字节数组
+	data, err := sonic.Marshal(obj) // 这里不需要使用 v2，直接使用 json.Marshal
+	if err != nil {
+		return nil, err
 	}
-	collect(trees)
-	return ids
+
+	// 使用 sonic.Unmarshal 解析字节数组为 map 切片
+	var result []map[string]any
+	err = sonic.Unmarshal(data, &result) // 同样的，直接使用 json.Unmarshal
+	if err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

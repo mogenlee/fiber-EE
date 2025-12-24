@@ -1,7 +1,7 @@
 # Parameter errors
 params_error: "Parameter validation failed"
 params_type_error: "Parameter type error"
-field_type_error: "Field {{.Field}} type error, expected {{.Type}}"
+field_type_error: "Field {{.Field}} type error, expected {{.Type}}, got {{.Actual}}"
 json_syntax_error: "JSON syntax error"
 
 # Common business errors
