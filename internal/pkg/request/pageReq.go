@@ -8,8 +8,8 @@ type PageReq struct {
 	PageSize int `query:"page_size" validate:"omitempty,min=1,max=100"`
 }
 
-// GetPage 获取页码，默认 1
-func (p *PageReq) GetPage() int {
+// GetPageNo 获取页码，默认 1
+func (p *PageReq) GetPageNo() int {
 	if p.PageNo <= 0 {
 		return 1
 	}
@@ -29,7 +29,7 @@ func (p *PageReq) GetPageSize() int {
 
 // GetOffset 获取偏移量
 func (p *PageReq) GetOffset() int {
-	return (p.GetPage() - 1) * p.GetPageSize()
+	return (p.GetPageNo() - 1) * p.GetPageSize()
 }
 
 // BindPage 绑定分页参数

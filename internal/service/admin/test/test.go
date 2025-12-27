@@ -107,7 +107,7 @@ func (t testService) List(ctx fiber.Ctx, pageReq *request.PageReq, listReq req.T
 	return response.PageData{
 		List:     result,
 		Total:    total,
-		Page:     pageReq.GetPage(),
+		PageNo:   pageReq.GetPageNo(),
 		PageSize: pageReq.GetPageSize(),
 	}, nil
 }
