@@ -57,10 +57,9 @@ func NewServer(p NewServerParams) *Server {
 	middleware.Use(app, p.Config, p.Log, p.Storage)
 
 	// 注册 Admin 路由组（JWT + Casbin）
-	admin := app.Group("/admin/v1",
-		middleware.JWTAuth(p.Config),
-		middleware.CasbinAuth(p.Enforcer),
-	)
+	admin := app.Group("/admin/v1") //middleware.JWTAuth(p.Config),
+	//middleware.CasbinAuth(p.Enforcer),
+
 	// 注册 Admin 路由
 	for _, r := range p.AdminRouters {
 		r.Register(admin)

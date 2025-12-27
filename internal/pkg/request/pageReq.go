@@ -4,16 +4,16 @@ import "github.com/gofiber/fiber/v3"
 
 // PageReq 分页请求参数
 type PageReq struct {
-	Page     int `query:"page" validate:"omitempty,min=1"`
+	PageNo   int `query:"page_no" validate:"omitempty,min=1"`
 	PageSize int `query:"page_size" validate:"omitempty,min=1,max=100"`
 }
 
 // GetPage 获取页码，默认 1
 func (p *PageReq) GetPage() int {
-	if p.Page <= 0 {
+	if p.PageNo <= 0 {
 		return 1
 	}
-	return p.Page
+	return p.PageNo
 }
 
 // GetPageSize 获取每页数量，默认 20
