@@ -69,10 +69,10 @@ func main() {
 	fmt.Println("\n请手动添加到注册列表：")
 	fmt.Printf("  internal/bootstrap/buildRouter.go:\n")
 	fmt.Printf("    import %s \"fiber-ee/internal/handler/admin/%s\"\n", name, name)
-	fmt.Printf("    var adminRouters = []any{ ..., %s.NewRouter }\n\n", name)
+	fmt.Printf("    var adminRouters = []any{ ..., %s.New%sRouter }\n\n", name, toTitle(name))
 	fmt.Printf("  internal/bootstrap/buildService.go:\n")
 	fmt.Printf("    import %s \"fiber-ee/internal/service/admin/%s\"\n", name, name)
-	fmt.Printf("    var adminServices = []any{ ..., %s.NewService }\n", name)
+	fmt.Printf("    var adminServices = []any{ ..., %s.New%sService }\n", name, toTitle(name))
 }
 
 func generateFile(tplPath, outPath string, data ModuleData) {

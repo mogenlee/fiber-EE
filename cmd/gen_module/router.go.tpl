@@ -8,21 +8,21 @@ import (
 	"go.uber.org/zap"
 )
 
-type {{.StructName}}Router struct {
+type I{{.StructName}}Router struct {
 	log      *zap.Logger
-	svc      {{.PackageName}}.{{.StructName}}Service
+	svc      {{.PackageName}}.I{{.StructName}}Service
 	validate request.Validate
 }
 
-func New{{.StructName}}Router(log *zap.Logger, svc {{.PackageName}}.{{.StructName}}Service, validate request.Validate) *{{.StructName}}Router {
-	return &{{.StructName}}Router{
+func New{{.StructName}}Router(log *zap.Logger, svc {{.PackageName}}.I{{.StructName}}Service, validate request.Validate) *I{{.StructName}}Router {
+	return &I{{.StructName}}Router{
 		log:      log,
 		svc:      svc,
 		validate: validate,
 	}
 }
 
-func (h {{.StructName}}Router) Register(root fiber.Router) {
+func (h I{{.StructName}}Router) Register(root fiber.Router) {
 	group := root.Group("/{{.RoutePath}}")
 	_ = group
 	// TODO: 添加路由
