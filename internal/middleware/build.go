@@ -23,6 +23,11 @@ func Use(app *fiber.App, cfg *config.Config, logger *zap.Logger, storage fiber.S
 	// 监控路由
 	app.Use("/metrics", monitor.New(monitor.Config{Title: cfg.App.Name}))
 
+	// 健康检查
+	app.Get("/health", func(c fiber.Ctx) error {
+		return c.JSON(fiber.Map{"status": "ok"})
+	})
+
 	// panic 恢复
 	app.Use(recoverErr(logger))
 
