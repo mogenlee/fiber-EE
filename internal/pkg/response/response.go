@@ -25,8 +25,8 @@ type Response struct {
 type PageData struct {
 	List     any   `json:"list"`
 	Total    int64 `json:"total"`
-	Page     int   `json:"page"`
-	PageSize int   `json:"pageSize"`
+	PageNo   int   `json:"page_no"`
+	PageSize int   `json:"page_size"`
 }
 
 // 错误码规范:
@@ -143,11 +143,11 @@ func CheckWithData(c fiber.Ctx, data any, err error) error {
 }
 
 // SuccessPage 分页成功响应
-func SuccessPage(c fiber.Ctx, list any, total int64, page, pageSize int) error {
+func SuccessPage(c fiber.Ctx, list any, total int64, pageNo, pageSize int) error {
 	return Success(c, PageData{
 		List:     list,
 		Total:    total,
-		Page:     page,
+		PageNo:   pageNo,
 		PageSize: pageSize,
 	})
 }

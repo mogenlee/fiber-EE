@@ -1,7 +1,7 @@
 # 参数错误
 params_error: "参数校验错误"
 params_type_error: "参数类型错误"
-field_type_error: "字段 {{.Field}} 类型错误，期望 {{.Type}}"
+field_type_error: "字段 {{.Field}} 类型错误，期望 {{.Type}}，实际 {{.Actual}}"
 json_syntax_error: "JSON 格式错误"
 
 # 通用业务错误
