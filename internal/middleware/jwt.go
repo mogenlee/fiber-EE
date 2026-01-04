@@ -121,8 +121,8 @@ func RefreshToken(cfg *JWTConfig, refreshTokenStr string) (*TokenPair, error) {
 // JWTAuth JWT 认证中间件
 func JWTAuth(cfg *config.Config) fiber.Handler {
 	// 构建白名单 map（闭包内只初始化一次）
-	whitelistMap := make(map[string]struct{}, len(notAuthList))
-	for _, path := range notAuthList {
+	whitelistMap := make(map[string]struct{}, len(whitelist))
+	for _, path := range whitelist {
 		whitelistMap[path] = struct{}{}
 	}
 

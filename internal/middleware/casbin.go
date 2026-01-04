@@ -11,8 +11,8 @@ import (
 // 需要在 JWTAuth 之后使用，依赖 context 中的 role
 func CasbinAuth(enforcer *casbin.Enforcer) fiber.Handler {
 	// 构建白名单 map
-	whitelistMap := make(map[string]struct{}, len(notAuthList))
-	for _, path := range notAuthList {
+	whitelistMap := make(map[string]struct{}, len(whitelist))
+	for _, path := range whitelist {
 		whitelistMap[path] = struct{}{}
 	}
 

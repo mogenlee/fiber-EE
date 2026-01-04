@@ -1,6 +1,8 @@
 package bootstrap
 
 import (
+	"fiber-ee/app/router"
+	"fiber-ee/app/service"
 	"fiber-ee/internal/middleware"
 	"fiber-ee/internal/pkg/request"
 	"fiber-ee/internal/pkg/validator"
@@ -37,15 +39,15 @@ func BuildContainer() *dig.Container {
 	_ = c.Provide(middleware.NewJWTConfig)
 
 	// 注册 Admin Service
-	buildAdminServices(c)
+	service.BuildAdminServices(c)
 	// 注册 App Service
-	buildAppServices(c)
+	service.BuildAppServices(c)
 
 	// 注册 Admin Routers
-	buildAdminRoutes(c)
+	router.BuildAdminRoutes(c)
 
 	// 注册 App Routers
-	buildAppRoutes(c)
+	router.BuildAppRoutes(c)
 
 	return c
 }

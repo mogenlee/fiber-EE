@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"context"
+	"fiber-ee/app/router"
 	"fiber-ee/config"
 	"fiber-ee/internal/middleware"
 	"fiber-ee/internal/pkg/validator"
@@ -37,8 +38,8 @@ type NewServerParams struct {
 	DB           *gorm.DB
 	Storage      fiber.Storage
 	Enforcer     *casbin.Enforcer
-	AdminRouters []AppRouter `group:"admin_routers"`
-	AppRouters   []AppRouter `group:"app_routers"`
+	AdminRouters []router.AppRouter `group:"admin_routers"`
+	AppRouters   []router.AppRouter `group:"app_routers"`
 }
 
 // NewServer 创建并初始化服务器实例

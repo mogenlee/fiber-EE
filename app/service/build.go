@@ -1,18 +1,18 @@
-package bootstrap
+package service
 
 import (
-	"fiber-ee/internal/service/admin/test"
+	"fiber-ee/app/service/admin/test"
 
 	"go.uber.org/dig"
 )
 
-func buildAdminServices(c *dig.Container) {
+func BuildAdminServices(c *dig.Container) {
 	for _, svc := range adminServices {
 		_ = c.Provide(svc)
 	}
 }
 
-func buildAppServices(c *dig.Container) {
+func BuildAppServices(c *dig.Container) {
 	for _, svc := range appServices {
 		_ = c.Provide(svc)
 	}

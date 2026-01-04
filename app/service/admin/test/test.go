@@ -1,7 +1,7 @@
 package test
 
 import (
-	"fiber-ee/internal/dto/req"
+	"fiber-ee/app/dto/req"
 	"fiber-ee/internal/middleware"
 	"fiber-ee/internal/model/entity"
 	"fiber-ee/internal/model/query"

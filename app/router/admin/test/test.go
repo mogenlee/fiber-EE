@@ -1,10 +1,10 @@
 package test
 
 import (
-	"fiber-ee/internal/dto/req"
+	"fiber-ee/app/dto/req"
+	"fiber-ee/app/service/admin/test"
 	"fiber-ee/internal/pkg/request"
 	"fiber-ee/internal/pkg/response"
-	"fiber-ee/internal/service/admin/test"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/spf13/cast"
