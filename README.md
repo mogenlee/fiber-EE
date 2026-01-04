@@ -13,6 +13,9 @@
 - 📝 Zap 结构化日志（按日期切割）
 - ⚙️ Viper 配置管理
 - 🛡️ 限流中间件（支持 Redis/内存存储）
+- 📖 QingFeng Swagger 自动生成 API 文档
+- 💚 健康检查接口
+- 📊 实时监控面板
 - 🔄 优雅关闭
 - 🐳 Docker 部署支持
 
@@ -25,11 +28,9 @@
 │   │   ├── req/             # 请求结构体
 │   │   └── resp/            # 响应结构体
 │   ├── router/
-│   │   ├── admin/           # Admin 路由
-│   │   └── build.go         # 路由注册
+│   │   └── admin/           # Admin 路由
 │   └── service/
-│       ├── admin/           # Admin 服务
-│       └── build.go         # 服务注册
+│       └── admin/           # Admin 服务
 │
 ├── cmd/
 │   ├── server/              # 主程序入口
@@ -43,7 +44,9 @@
 │
 ├── internal/                # 内部包（不对外暴露）
 │   ├── bootstrap/           # 初始化（DI容器、数据库、日志等）
-│   ├── middleware/          # 中间件（JWT、Casbin、限流、日志）
+│   ├── docs/                # Swagger 文档（自动生成）
+│   ├── locales/             # 国际化翻译文件
+│   ├── middleware/          # 中间件
 │   ├── model/
 │   │   ├── entity/          # 数据库实体
 │   │   └── query/           # GORM Gen 查询代码
@@ -56,7 +59,6 @@
 │       └── validator/       # 验证器
 │
 ├── data/                    # 数据库文件
-├── locales/                 # 国际化翻译文件
 ├── logs/                    # 日志文件（按日期切割）
 └── static/                  # 静态资源
 ```
@@ -67,6 +69,7 @@
 
 ```bash
 go mod tidy
+go install github.com/swaggo/swag/cmd/swag@latest
 ```
 
 ### 2. 配置
@@ -77,6 +80,7 @@ go mod tidy
 app:
   name: "fiber-ee"
   port: ":8080"
+  debug: true
 
 database:
   driver: "sqlite"           # sqlite, mysql, postgres
@@ -109,8 +113,32 @@ go run cmd/server/main.go
 
 ### 4. 访问
 
-- API: http://localhost:8080
-- 监控: http://localhost:8080/metrics
+| 地址 | 说明 |
+|------|------|
+| http://localhost:8080 | API 服务 |
+| http://localhost:8080/doc/ | Swagger 文档 |
+| http://localhost:8080/metrics | 监控面板 |
+| http://localhost:8080/health | 健康检查 |
+
+## Swagger 文档
+
+启动时自动生成 API 文档，访问 `/doc/` 查看。
+
+在 Router 函数上添加注解：
+
+```go
+// @Summary 用户登录
+// @Description 用户登录获取 Token
+// @Tags 用户模块
+// @Accept json
+// @Produce json
+// @Param request body req.LoginReq true "登录参数"
+// @Success 200 {object} response.Response
+// @Router /user/login [post]
+func (h *UserRouter) Login(c fiber.Ctx) error {
+    // ...
+}
+```
 
 ## 代码生成
 
@@ -120,114 +148,44 @@ go run cmd/server/main.go
 go run cmd/gen_orm/main.go
 ```
 
-生成文件：
-- `internal/model/entity/` - 实体结构体
-- `internal/model/query/` - 查询方法
-
 ### 生成模块代码
 
 ```bash
 go run cmd/gen_module/main.go -name=article
 ```
 
-生成文件：
-- `app/router/admin/article/handler.go`
-- `app/service/admin/article/service.go`
-
 ## API 响应格式
 
-### 成功响应
-
 ```json
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": {}
-}
+// 成功
+{"code": 200, "msg": "操作成功", "data": {}}
+
+// 分页
+{"code": 200, "msg": "操作成功", "data": {"list": [], "total": 100, "page_no": 1, "page_size": 10}}
+
+// 错误
+{"code": 4004, "msg": "账号或密码错误", "data": null}
 ```
-
-### 分页响应
-
-```json
-{
-    "code": 200,
-    "msg": "操作成功",
-    "data": {
-        "list": [],
-        "total": 100,
-        "page": 1,
-        "pageSize": 10
-    }
-}
-```
-
-### 错误响应
-
-```json
-{
-    "code": 4004,
-    "msg": "账号或密码错误",
-    "data": null
-}
-```
-
-## 错误码规范
-
-| 范围 | 说明 |
-|------|------|
-| 200 | 成功 |
-| 1xxx | 通用业务错误 |
-| 2xxx | 参数相关错误 |
-| 3xxx | 数据操作错误 |
-| 4xxx | 认证授权错误 |
-| 5xxx | 系统级错误 |
 
 ## JWT 认证
 
-### 登录响应
-
-```json
-{
-    "access_token": "eyJhbGciOiJIUzI1NiIs...",
-    "refresh_token": "eyJhbGciOiJIUzI1NiIs...",
-    "expires_in": 7200
-}
-```
-
-### 使用 Token
-
-```
+```bash
+# 请求头
 Authorization: Bearer <access_token>
-```
 
-### Token 刷新
-
-**POST /admin/v1/auth/refresh**
-
-```json
-{ "refresh_token": "eyJhbGciOiJIUzI1NiIs..." }
+# Token 刷新
+POST /admin/v1/auth/refresh
+{"refresh_token": "..."}
 ```
 
 ## 自定义类型
 
-### Timestamp
-
-数据库存 int，JSON 输出日期格式：
-
 ```go
-type User struct {
-    CreatedAt types.Timestamp `json:"createdAt"` // 输出: "2025-01-04 12:00:00"
-}
-```
+// Timestamp: 数据库 int → JSON 日期字符串
+CreatedAt types.Timestamp `json:"createdAt"` // "2025-01-04 12:00:00"
 
-### Bool
-
-数据库存 int (0/1)，JSON 输出 true/false：
-
-```go
-type User struct {
-    IsActive types.Bool `json:"isActive"` // 输出: true
-}
+// Bool: 数据库 int(0/1) → JSON bool
+IsActive types.Bool `json:"isActive"` // true/false
 ```
 
 ## 限流配置
@@ -238,16 +196,6 @@ limiter:
   max: 100            # 每分钟最大请求数
   expiration: 60      # 时间窗口（秒）
   skip_local: true    # 跳过本地请求
-```
-
-## 白名单配置
-
-不需要认证的路由在 `internal/middleware/whitelist.go`：
-
-```go
-var whitelist = []string{
-    "/admin/v1/auth/login",
-}
 ```
 
 ## Docker 部署
