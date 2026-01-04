@@ -10,7 +10,7 @@ import (
 // New 创建 i18n 中间件
 func New() fiber.Handler {
 	return contribi18n.New(&contribi18n.Config{
-		RootPath:        "./locales",
+		RootPath:        "./internal/locales",
 		AcceptLanguages: []language.Tag{language.Chinese, language.English},
 		DefaultLanguage: language.Chinese,
 		LangHandler: func(c fiber.Ctx, defaultLang string) string {

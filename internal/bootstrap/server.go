@@ -10,7 +10,6 @@ import (
 
 	"github.com/bytedance/sonic"
 	"github.com/casbin/casbin/v2"
-	"github.com/gofiber/contrib/v3/monitor"
 	"github.com/gofiber/fiber/v3"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/dig"
@@ -51,8 +50,6 @@ func NewServer(p NewServerParams) *Server {
 		StructValidator: p.Validator,
 		ErrorHandler:    middleware.NewErrorHandler(p.Log),
 	})
-	// 注册监控路由
-	app.Get("/metrics", monitor.New(monitor.Config{Title: p.Config.App.Name}))
 
 	// 注册全局中间件
 	middleware.Use(app, p.Config, p.Log, p.Storage)

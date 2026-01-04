@@ -13,6 +13,15 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title Fiber-EE API
+// @version 1.0.0
+// @description 企业级 Go Web 框架 API 文档
+// @host localhost:8080
+// @BasePath /admin/v1
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
 func main() {
 	c := bootstrap.BuildContainer()
 

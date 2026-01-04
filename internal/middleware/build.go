@@ -4,6 +4,7 @@ import (
 	"fiber-ee/config"
 	"fiber-ee/internal/pkg/i18n"
 
+	"github.com/gofiber/contrib/v3/monitor"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/compress"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -15,6 +16,12 @@ import (
 
 // Use 注册全局中间件（不含认证）
 func Use(app *fiber.App, cfg *config.Config, logger *zap.Logger, storage fiber.Storage) {
+	//	swagger
+	app.Use(swagger(cfg))
+
+	// 监控路由
+	app.Use("/metrics", monitor.New(monitor.Config{Title: cfg.App.Name}))
+
 	// panic 恢复
 	app.Use(recoverErr(logger))
 
