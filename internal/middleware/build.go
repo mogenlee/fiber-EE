@@ -16,8 +16,9 @@ import (
 
 // Use 注册全局中间件（不含认证）
 func Use(app *fiber.App, cfg *config.Config, logger *zap.Logger, storage fiber.Storage) {
-	//	swagger
-	app.Use(swagger(cfg))
+
+	// swagger 文档（放在最前面，避免被其他中间件拦截）
+	app.Use("/doc/*", swagger(cfg))
 
 	// 监控路由
 	app.Use("/metrics", monitor.New(monitor.Config{Title: cfg.App.Name}))
