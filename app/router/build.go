@@ -26,8 +26,8 @@ func BuildAppRoutes(c *dig.Container) {
 }
 
 var adminRouters = []any{
-	auth.NewRouter,
 	test.NewRouter,
+	auth.NewRouter,
 }
 
 var appRouters = []any{}

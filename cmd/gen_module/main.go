@@ -11,12 +11,11 @@ import (
 )
 
 type ModuleData struct {
-	PackageName string // 包名，如 article
-	StructName  string // 结构体名，如 Article（首字母大写）
-	RoutePath   string // 路由路径，如 article
+	PackageName string
+	StructName  string
+	RoutePath   string
 }
 
-// 首字母大写
 func toTitle(s string) string {
 	if s == "" {
 		return s
@@ -27,20 +26,15 @@ func toTitle(s string) string {
 }
 
 func main() {
-	// 命令行参数
 	moduleName := flag.String("name", "", "模块名称 (必填)")
-	handlerOut := flag.String("router", "internal/router/admin", "router 输出目录")
-	serviceOut := flag.String("service", "internal/service/admin", "service 输出目录")
+	routerOut := flag.String("router", "app/router/admin", "router 输出目录")
+	serviceOut := flag.String("service", "app/service/admin", "service 输出目录")
 	tplDir := flag.String("tpl", "cmd/gen_module", "模板目录")
 	flag.Parse()
 
 	if *moduleName == "" {
-		fmt.Println("用法: go run cmd/gen_module/main.go -name=<模块名> [选项]")
-		fmt.Println("\n选项:")
-		flag.PrintDefaults()
-		fmt.Println("\n示例:")
-		fmt.Println("  go run cmd/gen_module/main.go -name=article")
-		fmt.Println("  go run cmd/gen_module/main.go -name=article -router=internal/router/app")
+		fmt.Println("用法: make module name=<模块名>")
+		fmt.Println("示例: make module name=article")
 		os.Exit(1)
 	}
 
@@ -52,44 +46,84 @@ func main() {
 	}
 
 	// 生成 router
-	handlerDir := filepath.Join(*handlerOut, name)
-	if err := os.MkdirAll(handlerDir, 0755); err != nil {
-		panic(err)
-	}
-	generateFile(filepath.Join(*tplDir, "router.go.tpl"), filepath.Join(handlerDir, "router.go"), data)
+	routerDir := filepath.Join(*routerOut, name)
+	os.MkdirAll(routerDir, 0755)
+	generateFile(filepath.Join(*tplDir, "router.go.tpl"), filepath.Join(routerDir, "router.go"), data)
 
 	// 生成 service
 	serviceDir := filepath.Join(*serviceOut, name)
-	if err := os.MkdirAll(serviceDir, 0755); err != nil {
-		panic(err)
-	}
+	os.MkdirAll(serviceDir, 0755)
 	generateFile(filepath.Join(*tplDir, "service.go.tpl"), filepath.Join(serviceDir, "service.go"), data)
 
-	fmt.Printf("\n模块 [%s] 生成完成！\n", name)
-	fmt.Println("\n请手动添加到注册列表：")
-	fmt.Printf("  internal/bootstrap/build.go:\n")
-	fmt.Printf("    import %s \"fiber-ee/internal/router/admin/%s\"\n", name, name)
-	fmt.Printf("    var adminRouters = []any{ ..., %s.New%sRouter }\n\n", name, toTitle(name))
-	fmt.Printf("  internal/bootstrap/build.go:\n")
-	fmt.Printf("    import %s \"fiber-ee/internal/service/admin/%s\"\n", name, name)
-	fmt.Printf("    var adminServices = []any{ ..., %s.New%sService }\n", name, toTitle(name))
+	// 自动注入
+	injectRouter(name)
+	injectService(name)
+
+	fmt.Printf("\n✅ 模块 [%s] 生成完成！\n", name)
 }
 
 func generateFile(tplPath, outPath string, data ModuleData) {
 	tpl, err := template.ParseFiles(tplPath)
 	if err != nil {
-		panic(fmt.Errorf("解析模板失败 %s: %w", tplPath, err))
+		panic(err)
 	}
-
 	f, err := os.Create(outPath)
 	if err != nil {
-		panic(fmt.Errorf("创建文件失败 %s: %w", outPath, err))
+		panic(err)
 	}
 	defer f.Close()
+	tpl.Execute(f, data)
+	fmt.Printf("  生成: %s\n", outPath)
+}
 
-	if err := tpl.Execute(f, data); err != nil {
-		panic(fmt.Errorf("生成文件失败 %s: %w", outPath, err))
+func injectRouter(name string) {
+	path := "app/router/build.go"
+	content, _ := os.ReadFile(path)
+	str := string(content)
+
+	importLine := fmt.Sprintf("\t\"fiber-ee/app/router/admin/%s\"", name)
+	routerLine := fmt.Sprintf("\t%s.NewRouter,", name)
+
+	if strings.Contains(str, importLine) {
+		return
 	}
 
-	fmt.Printf("  生成: %s\n", outPath)
+	// 插入 import
+	str = strings.Replace(str,
+		"\"fiber-ee/app/router/admin/test\"",
+		"\"fiber-ee/app/router/admin/test\"\n"+importLine, 1)
+
+	// 插入 router
+	str = strings.Replace(str,
+		"var adminRouters = []any{",
+		"var adminRouters = []any{\n"+routerLine, 1)
+
+	os.WriteFile(path, []byte(str), 0644)
+	fmt.Printf("  注入: %s\n", path)
+}
+
+func injectService(name string) {
+	path := "app/service/build.go"
+	content, _ := os.ReadFile(path)
+	str := string(content)
+
+	importLine := fmt.Sprintf("\t\"fiber-ee/app/service/admin/%s\"", name)
+	serviceLine := fmt.Sprintf("\t%s.New%sService,", name, toTitle(name))
+
+	if strings.Contains(str, importLine) {
+		return
+	}
+
+	// 插入 import
+	str = strings.Replace(str,
+		"\"fiber-ee/app/service/admin/test\"",
+		"\"fiber-ee/app/service/admin/test\"\n"+importLine, 1)
+
+	// 插入 service
+	str = strings.Replace(str,
+		"var adminServices = []any{",
+		"var adminServices = []any{\n"+serviceLine, 1)
+
+	os.WriteFile(path, []byte(str), 0644)
+	fmt.Printf("  注入: %s\n", path)
 }

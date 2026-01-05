@@ -1,8 +1,8 @@
 package {{.PackageName}}
 
 import (
+	"fiber-ee/app/service/admin/{{.PackageName}}"
 	"fiber-ee/internal/pkg/request"
-	"fiber-ee/internal/service/admin/{{.PackageName}}"
 
 	"github.com/gofiber/fiber/v3"
 	"go.uber.org/zap"
@@ -10,11 +10,11 @@ import (
 
 type I{{.StructName}}Router struct {
 	log      *zap.Logger
-	svc      {{.PackageName}}.I{{.StructName}}Service
+	svc      {{.PackageName}}.{{.StructName}}Service
 	validate request.Validate
 }
 
-func New{{.StructName}}Router(log *zap.Logger, svc {{.PackageName}}.I{{.StructName}}Service, validate request.Validate) *I{{.StructName}}Router {
+func NewRouter(log *zap.Logger, svc {{.PackageName}}.{{.StructName}}Service, validate request.Validate) *I{{.StructName}}Router {
 	return &I{{.StructName}}Router{
 		log:      log,
 		svc:      svc,

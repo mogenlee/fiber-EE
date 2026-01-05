@@ -33,11 +33,15 @@ clean:
 
 # 生成 GORM Gen 代码
 gen:
-	go run ./cmd/gen
+	go run ./cmd/gen_orm
+
+# 生成模块代码 (用法: make module name=article)
+module:
+	go run ./cmd/gen_module -name=$(name)
 
 # 生成 Swagger 文档 (需要 swag: go install github.com/swaggo/swag/cmd/swag@latest)
 swagger:
-	swag init -g cmd/server/main.go -o docs
+	swag init -g cmd/server/main.go -o internal/docs --parseDependency
 
 # 代码检查 (需要 golangci-lint)
 lint:
